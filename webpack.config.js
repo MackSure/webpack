@@ -18,7 +18,12 @@ module.exports = {
 
                 publicPath: '/dist'
 
-            }) }
+            }) },
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                use: 'babel-loader'
+            }
         ]
     },
     devServer: {
