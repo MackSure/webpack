@@ -3,6 +3,8 @@ const ExtractTextPlugin = require("extract-text-webpack-plugin");
 var webpack = require('webpack');
 var path = require('path');
 
+var bootstrapEntryPoints = require('./webpack.bootstrap.config.js');
+
 var isProd = (process.env.NODE_ENV === 'production');
 var cssDev = ['style-loader', 'css-loader', 'sass-loader'];
 var cssProd = ExtractTextPlugin.extract({
@@ -12,10 +14,12 @@ var cssProd = ExtractTextPlugin.extract({
 });
 
 var cssConfig = isProd ? cssProd : cssDev;
+var bootstrapConfig = isProd ? bootstrapEntryPoints.prod : bootstrapEntryPoints.dev;
 
 module.exports = {
     entry: {
         app: './src/app.js',
+        bootstrap: bootstrapConfig,
         contact: './src/contact.js'
     },
     output: {
@@ -36,36 +40,39 @@ module.exports = {
             {
                 test: /\jpe?g|.png|gif|svg$/i,
                 use: [
-                    'file-loader?name=images/[name].[ext]', 
+                    'file-loader?name=images/[name].[ext]',
                     //you can use it like below.
                     // 'file-loader?name=[hash:12].[ext]&outputPath=images/&publicPath=images/', 
                     // 'image-webpack-loader'
                     {
                         loader: 'image-webpack-loader',
                         options: {
-                          mozjpeg: {
-                            progressive: true,
-                            quality: 65
-                          },
-                          // optipng.enabled: false will disable optipng
-                          optipng: {
-                            enabled: false,
-                          },
-                          pngquant: {
-                            quality: '65-90',
-                            speed: 4
-                          },
-                          gifsicle: {
-                            interlaced: false,
-                          },
-                          // the webp option will enable WEBP
-                          webp: {
-                            quality: 75
-                          }
+                            mozjpeg: {
+                                progressive: true,
+                                quality: 65
+                            },
+                            // optipng.enabled: false will disable optipng
+                            optipng: {
+                                enabled: false,
+                            },
+                            pngquant: {
+                                quality: '65-90',
+                                speed: 4
+                            },
+                            gifsicle: {
+                                interlaced: false,
+                            },
+                            // the webp option will enable WEBP
+                            webp: {
+                                quality: 75
+                            }
                         }
-                      },
-            ]
-            }
+                    },
+                ]
+            },
+            { test: /\.(woff2?|svg)$/, loader: 'url-loader?limit=10000&name=fonts/[name].[ext]' },
+            { test: /\.(ttf|eot)$/, loader: 'file-loader?name=fonts/[name].[ext]' },
+            { test: /bootstrap-sass[\/\\]assets[\/\\]javascripts[\/\\]/, loader: 'imports-loader?jQuery=jquery' }
         ]
     },
     devServer: {
@@ -91,9 +98,9 @@ module.exports = {
     }),
     new ExtractTextPlugin({
 
-        filename: "app.css",
+        filename: "/css/[name].css",
 
-        disable: isProd,
+        disable: !isProd,
 
         allChunks: true
 
