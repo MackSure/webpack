@@ -38,8 +38,32 @@ module.exports = {
                 use: [
                     'file-loader?name=images/[name].[ext]', 
                     //you can use it like below.
-                    // 'file-loader?name=[name].[ext]&outputPath=images/&publicPath=images/', 
-                    'image-webpack-loader'
+                    // 'file-loader?name=[hash:12].[ext]&outputPath=images/&publicPath=images/', 
+                    // 'image-webpack-loader'
+                    {
+                        loader: 'image-webpack-loader',
+                        options: {
+                          mozjpeg: {
+                            progressive: true,
+                            quality: 65
+                          },
+                          // optipng.enabled: false will disable optipng
+                          optipng: {
+                            enabled: false,
+                          },
+                          pngquant: {
+                            quality: '65-90',
+                            speed: 4
+                          },
+                          gifsicle: {
+                            interlaced: false,
+                          },
+                          // the webp option will enable WEBP
+                          webp: {
+                            quality: 75
+                          }
+                        }
+                      },
             ]
             }
         ]
