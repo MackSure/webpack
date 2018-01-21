@@ -32,6 +32,15 @@ module.exports = {
                 test: /\.js$/,
                 exclude: /node_modules/,
                 use: 'babel-loader'
+            },
+            {
+                test: /\jpe?g|.png|gif|svg$/i,
+                use: [
+                    'file-loader?name=images/[name].[ext]', 
+                    //you can use it like below.
+                    // 'file-loader?name=[name].[ext]&outputPath=images/&publicPath=images/', 
+                    'image-webpack-loader'
+            ]
             }
         ]
     },
@@ -45,9 +54,6 @@ module.exports = {
     },
     plugins: [new HtmlWebpackPlugin({
         title: 'Custom template',
-        // minify: {
-        //     collapseWhitespace: true
-        // },
         excludeChunks: ['contact'],
         hash: true,
         template: './src/index.html'
