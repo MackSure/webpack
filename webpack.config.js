@@ -1,20 +1,22 @@
-var HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
-var webpack = require('webpack');
-var path = require('path');
+const webpack = require('webpack');
+const path = require('path');
+const glob = require('glob');
+const PurifyCSSPlugin = require('purifycss-webpack');
 
-var bootstrapEntryPoints = require('./webpack.bootstrap.config.js');
+const bootstrapEntryPoints = require('./webpack.bootstrap.config.js');
 
-var isProd = (process.env.NODE_ENV === 'production');
-var cssDev = ['style-loader', 'css-loader', 'sass-loader'];
-var cssProd = ExtractTextPlugin.extract({
+const isProd = (process.env.NODE_ENV === 'production');
+const cssDev = ['style-loader', 'css-loader', 'sass-loader'];
+const cssProd = ExtractTextPlugin.extract({
     fallback: 'style-loader',
     use: ['css-loader', 'sass-loader'],
     publicPath: '/dist'
 });
 
-var cssConfig = isProd ? cssProd : cssDev;
-var bootstrapConfig = isProd ? bootstrapEntryPoints.prod : bootstrapEntryPoints.dev;
+const cssConfig = isProd ? cssProd : cssDev;
+const bootstrapConfig = isProd ? bootstrapEntryPoints.prod : bootstrapEntryPoints.dev;
 
 module.exports = {
     entry: {
@@ -106,6 +108,9 @@ module.exports = {
 
     }),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NamedModulesPlugin()
+    new webpack.NamedModulesPlugin(),
+    new PurifyCSSPlugin({
+        paths: glob.sync(path.join(__dirname, 'src/*html'))
+    })
     ]
 }
